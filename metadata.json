@@ -1,0 +1,6 @@
+{
+  "name": "Pharmacy Management System",
+  "description": "Local offline-first pharmacy ERP for inventory, FIFO batch dispensing, POS billing, purchases, staff roles, and license gating.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
