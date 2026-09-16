@@ -187,6 +187,7 @@ export const SettingsView: React.FC<Props> = ({
           indicatorColor="primary"
         >
           <Tab value="pharmacy" label="Pharmacy Profile" className="text-xs font-bold capitalize" />
+          <Tab value="hardware" label="Hardware & Printers" className="text-xs font-bold capitalize" />
           <Tab value="backup" label="Automated GitHub Backups" className="text-xs font-bold capitalize" />
           <Tab value="license" label="License & JazzCash Billing" className="text-xs font-bold capitalize" />
         </Tabs>
@@ -272,6 +273,61 @@ export const SettingsView: React.FC<Props> = ({
               </Button>
             </div>
           </form>
+        </Paper>
+      )}
+
+      {/* TAB: HARDWARE & PRINTERS */}
+      {activeTab === 'hardware' && (
+        <Paper elevation={0} className="border border-slate-200 rounded-xl p-6 bg-white max-w-2xl space-y-6">
+          <div className="pb-3 border-b border-slate-100">
+            <h3 className="font-bold text-sm text-slate-800">Network Printer Configuration</h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Connect a thermal receipt printer over your local network (LAN) for direct raw printing.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TextField
+              fullWidth
+              size="small"
+              label="Printer IP Address"
+              placeholder="e.g. 192.168.1.100"
+              defaultValue="192.168.1.87"
+            />
+            <TextField
+              fullWidth
+              size="small"
+              label="Printer Port"
+              placeholder="e.g. 9100"
+              defaultValue="9100"
+            />
+            <div className="col-span-1 sm:col-span-2">
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Printer Model / Protocol</label>
+              <select className="w-full border border-slate-300 rounded p-2 text-sm bg-white">
+                <option value="epson">ESC/POS (Epson, Xprinter, Generic Thermal)</option>
+                <option value="star">StarPRNT (Star Micronics)</option>
+                <option value="tspl">TSPL (Label Printers)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs text-slate-600">
+            <p className="font-bold mb-1 text-slate-700">How to connect:</p>
+            <ol className="list-decimal pl-4 space-y-1">
+              <li>Ensure your thermal printer is connected to the same WiFi router or LAN network.</li>
+              <li>Print a self-test page from the printer to find its assigned IP Address.</li>
+              <li>Enter the IP address above and click Connect.</li>
+            </ol>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+            <Button variant="outlined" size="small" className="text-slate-600 border-slate-300">
+              Test Connection
+            </Button>
+            <Button variant="contained" size="small" className="bg-teal-700 hover:bg-teal-800 text-white">
+              Save Printer Settings
+            </Button>
+          </div>
         </Paper>
       )}
 

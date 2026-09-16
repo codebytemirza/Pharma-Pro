@@ -446,7 +446,7 @@ export const InventoryView: React.FC<Props> = ({
               <TextField
                 fullWidth
                 size="small"
-                label="Medicine Name *"
+                label="Medicine Name"
                 placeholder="e.g. Augmentin 625mg"
                 value={medForm.name}
                 onChange={(e) => setMedForm({ ...medForm, name: e.target.value })}
@@ -455,7 +455,7 @@ export const InventoryView: React.FC<Props> = ({
               <TextField
                 fullWidth
                 size="small"
-                label="Generic / Formula Name *"
+                label="Generic / Formula Name"
                 placeholder="e.g. Amoxicillin + Clavulanic"
                 value={medForm.generic_name}
                 onChange={(e) => setMedForm({ ...medForm, generic_name: e.target.value })}
@@ -464,7 +464,7 @@ export const InventoryView: React.FC<Props> = ({
               <TextField
                 fullWidth
                 size="small"
-                label="Category *"
+                label="Category"
                 placeholder="e.g. Antibiotics"
                 value={medForm.category}
                 onChange={(e) => setMedForm({ ...medForm, category: e.target.value })}
@@ -473,7 +473,7 @@ export const InventoryView: React.FC<Props> = ({
               <TextField
                 fullWidth
                 size="small"
-                label="Manufacturer / Brand *"
+                label="Manufacturer / Brand"
                 placeholder="e.g. GSK Pakistan"
                 value={medForm.manufacturer}
                 onChange={(e) => setMedForm({ ...medForm, manufacturer: e.target.value })}
@@ -483,7 +483,7 @@ export const InventoryView: React.FC<Props> = ({
                 select
                 fullWidth
                 size="small"
-                label="Unit Packaging Type *"
+                label="Unit Packaging Type"
                 value={medForm.unit_type}
                 onChange={(e) => setMedForm({ ...medForm, unit_type: e.target.value as any })}
               >
@@ -508,7 +508,7 @@ export const InventoryView: React.FC<Props> = ({
                 fullWidth
                 size="small"
                 type="number"
-                label="Purchase Cost Price *"
+                label="Purchase Cost Price"
                 value={medForm.purchase_price}
                 onChange={(e) => setMedForm({ ...medForm, purchase_price: parseFloat(e.target.value) || 0 })}
                 required
@@ -517,7 +517,7 @@ export const InventoryView: React.FC<Props> = ({
                 fullWidth
                 size="small"
                 type="number"
-                label="Sale Price *"
+                label="Sale Price"
                 value={medForm.sale_price}
                 onChange={(e) => setMedForm({ ...medForm, sale_price: parseFloat(e.target.value) || 0 })}
                 required
@@ -579,14 +579,43 @@ export const InventoryView: React.FC<Props> = ({
                   value={medForm.initial_batch_number}
                   onChange={(e) => setMedForm({ ...medForm, initial_batch_number: e.target.value })}
                 />
-                <TextField
-                  fullWidth
-                  size="small"
-                  type="number"
-                  label="Quantity Received"
-                  value={medForm.initial_quantity}
-                  onChange={(e) => setMedForm({ ...medForm, initial_quantity: parseInt(e.target.value) || 0 })}
-                />
+                {medForm.units_per_pack > 1 ? (
+                  <div className="flex gap-2">
+                    <TextField
+                      fullWidth
+                      size="small"
+                      type="number"
+                      label={`Packs Received (${medForm.units_per_pack}s)`}
+                      value={Math.floor(medForm.initial_quantity / medForm.units_per_pack)}
+                      onChange={(e) => {
+                        const p = parseInt(e.target.value) || 0;
+                        const l = medForm.initial_quantity % medForm.units_per_pack;
+                        setMedForm({ ...medForm, initial_quantity: p * medForm.units_per_pack + l });
+                      }}
+                    />
+                    <TextField
+                      fullWidth
+                      size="small"
+                      type="number"
+                      label="Loose Units"
+                      value={medForm.initial_quantity % medForm.units_per_pack}
+                      onChange={(e) => {
+                        const p = Math.floor(medForm.initial_quantity / medForm.units_per_pack);
+                        const l = parseInt(e.target.value) || 0;
+                        setMedForm({ ...medForm, initial_quantity: p * medForm.units_per_pack + l });
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <TextField
+                    fullWidth
+                    size="small"
+                    type="number"
+                    label="Quantity Received"
+                    value={medForm.initial_quantity}
+                    onChange={(e) => setMedForm({ ...medForm, initial_quantity: parseInt(e.target.value) || 0 })}
+                  />
+                )}
                 <TextField
                   fullWidth
                   size="small"
@@ -717,25 +746,56 @@ export const InventoryView: React.FC<Props> = ({
           <TextField
             fullWidth
             size="small"
-            label="Batch Number *"
+            label="Batch Number"
             value={newBatchForm.batch_number}
             onChange={(e) => setNewBatchForm({ ...newBatchForm, batch_number: e.target.value })}
             required
           />
-          <TextField
-            fullWidth
-            size="small"
-            type="number"
-            label="Quantity Received *"
-            value={newBatchForm.quantity}
-            onChange={(e) => setNewBatchForm({ ...newBatchForm, quantity: parseInt(e.target.value) || 0 })}
-            required
-          />
+          {(activeMedForBatches?.units_per_pack || 1) > 1 ? (
+            <div className="flex gap-2">
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                label={`Packs Received (${activeMedForBatches!.units_per_pack}s)`}
+                value={Math.floor(newBatchForm.quantity / activeMedForBatches!.units_per_pack)}
+                onChange={(e) => {
+                  const p = parseInt(e.target.value) || 0;
+                  const l = newBatchForm.quantity % activeMedForBatches!.units_per_pack;
+                  setNewBatchForm({ ...newBatchForm, quantity: p * activeMedForBatches!.units_per_pack + l });
+                }}
+                required
+              />
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                label="Loose Units Received"
+                value={newBatchForm.quantity % activeMedForBatches!.units_per_pack}
+                onChange={(e) => {
+                  const p = Math.floor(newBatchForm.quantity / activeMedForBatches!.units_per_pack);
+                  const l = parseInt(e.target.value) || 0;
+                  setNewBatchForm({ ...newBatchForm, quantity: p * activeMedForBatches!.units_per_pack + l });
+                }}
+                required
+              />
+            </div>
+          ) : (
+            <TextField
+              fullWidth
+              size="small"
+              type="number"
+              label="Quantity Received"
+              value={newBatchForm.quantity}
+              onChange={(e) => setNewBatchForm({ ...newBatchForm, quantity: parseInt(e.target.value) || 0 })}
+              required
+            />
+          )}
           <TextField
             fullWidth
             size="small"
             type="date"
-            label="Expiry Date *"
+            label="Expiry Date"
             slotProps={{ inputLabel: { shrink: true } }}
             value={newBatchForm.expiry_date}
             onChange={(e) => setNewBatchForm({ ...newBatchForm, expiry_date: e.target.value })}
@@ -745,7 +805,7 @@ export const InventoryView: React.FC<Props> = ({
             fullWidth
             size="small"
             type="number"
-            label="Purchase Cost Price For This Batch *"
+            label="Purchase Cost Price For This Batch"
             value={newBatchForm.purchase_price}
             onChange={(e) => setNewBatchForm({ ...newBatchForm, purchase_price: parseFloat(e.target.value) || 0 })}
             required
@@ -791,7 +851,7 @@ export const InventoryView: React.FC<Props> = ({
             select
             fullWidth
             size="small"
-            label="Adjustment Type *"
+            label="Adjustment Type"
             value={adjustForm.type}
             onChange={(e) => setAdjustForm({ ...adjustForm, type: e.target.value as any })}
           >
@@ -805,7 +865,7 @@ export const InventoryView: React.FC<Props> = ({
             fullWidth
             size="small"
             type="number"
-            label="Quantity Change (+ to add, - to subtract) *"
+            label="Quantity Change (+ to add, - to subtract)"
             helperText="e.g. -5 to write off 5 damaged units, or +10 for found stock"
             value={adjustForm.change_qty}
             onChange={(e) => setAdjustForm({ ...adjustForm, change_qty: parseInt(e.target.value) || 0 })}
@@ -817,7 +877,7 @@ export const InventoryView: React.FC<Props> = ({
             size="small"
             multiline
             rows={2}
-            label="Mandatory Reason *"
+            label="Mandatory Reason"
             placeholder="e.g. Water leak damaged 3 boxes during monsoon"
             value={adjustForm.reason}
             onChange={(e) => setAdjustForm({ ...adjustForm, reason: e.target.value })}

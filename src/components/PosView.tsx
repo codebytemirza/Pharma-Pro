@@ -702,9 +702,13 @@ export const PosView: React.FC<Props> = ({
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-7 text-center text-xs font-bold text-slate-800">
-                          {item.quantity}
-                        </span>
+                        <input
+                          type="number"
+                          className="w-10 text-center text-xs font-bold text-slate-800 bg-transparent outline-none appearance-none m-0"
+                          value={item.quantity === 0 && (item.loose_quantity || 0) > 0 ? '' : item.quantity}
+                          onChange={(e) => updateQuantity(idx, parseInt(e.target.value) || 0, item.loose_quantity || 0)}
+                          min="0"
+                        />
                         <button
                           onClick={() => updateQuantity(idx, item.quantity + 1, item.loose_quantity || 0)}
                           className="p-1 text-slate-500 hover:bg-slate-100 rounded-r"
@@ -721,9 +725,13 @@ export const PosView: React.FC<Props> = ({
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-7 text-center text-xs font-bold text-teal-800">
-                            {item.loose_quantity || 0}
-                          </span>
+                          <input
+                            type="number"
+                            className="w-10 text-center text-xs font-bold text-teal-800 bg-transparent outline-none appearance-none m-0"
+                            value={item.loose_quantity === 0 && item.quantity > 0 ? '' : (item.loose_quantity || 0)}
+                            onChange={(e) => updateQuantity(idx, item.quantity, parseInt(e.target.value) || 0)}
+                            min="0"
+                          />
                           <button
                             onClick={() => updateQuantity(idx, item.quantity, (item.loose_quantity || 0) + 1)}
                             className="p-1 text-teal-600 hover:bg-teal-100 rounded-r"
